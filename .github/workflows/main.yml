@@ -1,0 +1,24 @@
+name: Build VIP BINPRO
+on: [push] # Tự động chạy mỗi khi bạn nhấn Save (Commit)
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Theos (Môi trường biên dịch)
+        run: |
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          
+      - name: Build Dylib cho iPhone 14 Pro Max
+        run: |
+          export THEOS=$HOME/theos
+          make package FINALPACKAGE=1
+          
+      - name: Luu file sau khi build xong
+        uses: actions/upload-artifact@v3
+        with:
+          name: VIP_BINPRO_DYLIB
+          path: .theos/obj/*.dylib
